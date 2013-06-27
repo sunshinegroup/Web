@@ -1,0 +1,46 @@
+
+<php>if($userPrivacy['space'] != 1){</php>
+                <php>if($follower_list['data']){</php>
+                    <!--搜索列表-->
+                        <volist name="follower_list.data" id="_follower">
+                            <php> $img = !empty($_GET['show']) ? $user_info[$_follower['fid']]['avatar_big']:$user_info[$_follower['fid']]['avatar_middle']; </php>
+                      		uid: {$_follower['fid']} <br/>
+                      		user_name: {$user_info[$_follower['fid']]['uname']} <br/>
+                      		sex: {$user_info[$_follower['fid']]['sex']}     //1:男 2:女<br/>
+                      		face: {$img} <br/>
+                      		space: {$user_info[$_follower['fid']]['space_url']} <br/>
+                      		following_count: {:(int)$user_count[$_follower['fid']]['following_count']} <br/>
+                      		follower_count: {:(int)$user_count[$_follower['fid']]['follower_count']} <br/>
+                      		weibo_count: {:(int)$user_count[$_follower['fid']]['weibo_count']} <br/>
+							intro: {$user_info[$_follower['fid']]['intro']} <br/>
+							<!--判断访问者就是该用户，则输出，与粉丝的关注状态-->
+							<php>if($mid){</php>
+								<if condition="$mid neq $_follower['fid']">
+                            		follow_state: {$follow_state[$_follower['fid']]['following']} //0:未关注  1:已相互关注<br/>
+                                </if>
+                            <php>}</php>
+                            user_group: {
+								<volist name="userGroupData[$_follower['fid']]" id="vo">
+                                    user_group_name: {$vo['user_group_name']}  ,  user_group_icon_url: {$vo['user_group_icon_url']} <br/>
+                            	</volist>
+                            } <br/>
+                            user_tag: {
+								<php>if($user_tag[$_follower['fid']]){</php>
+                                    <volist name="user_tag[$_follower['fid']]" id="u_t_v">
+                                    	{$u_t_v}  <br/>
+                                    </volist>
+								<php>}</php>
+							} <br/>
+							------------------------------------- <br/>
+                        </volist>
+                    <!--搜索列表/end-->
+                    <!--页码-->
+                    {$follower_list.html}
+                    <!--页码/end-->
+				<php>}else{</php>
+					暂时没有关注TA的人
+				<php>}</php>
+<php>}else{</php>
+            根据对方隐私设置，您无权查看TA的主页
+<php>}</php>
+
