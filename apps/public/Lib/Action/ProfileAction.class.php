@@ -43,12 +43,8 @@ class ProfileAction extends Action {
 		$user_info = model ( 'User' )->getUserInfo ( $this->uid );
 		// 用户为空，则跳转用户不存在
 		if (empty ( $user_info )) {
-			$this->error ( L ( 'PUBLIC_USER_NOEXIST' ) );
+			$this->assign("error","用户不存在！");//**********************
 		}
-		// 个人空间头部
-		$this->_top ();
-		$this->_tab_menu();
-		
 		// 判断隐私设置
 		$userPrivacy = $this->privacy ( $this->uid );
 		if ($userPrivacy ['space'] !== 1) {
@@ -83,6 +79,9 @@ class ProfileAction extends Action {
 		! empty ( $seo ['des'] ) && $this->setDescription ( $seo ['des'] );
 		$this->display ();
 	}
+	
+	
+	
 	function appList() {
 		// 获取用户信息
 		$user_info = model ( 'User' )->getUserInfo ( $this->uid );
@@ -226,22 +225,7 @@ class ProfileAction extends Action {
 		}
 	
 		//获取微博信息
-		$feedInfo = model ( 'Feed' )->get ( $feed_id );
-
-		if (!$feedInfo){
-			$this->error ( '该微博不存在或已被删除' );
-			exit();
-		}
-			
-		if ($feedInfo ['is_audit'] == '0' && $feedInfo ['uid'] != $this->mid) {
-			$this->error ( '此微博正在审核' );
-			exit();
-		}
-
-		if ($feedInfo ['is_del'] == '1') {
-			$this->error ( L ( 'PUBLIC_NO_RELATE_WEIBO' ) );
-			exit();
-		}
+		
 
 		// 获取用户信息
 		$user_info = model ( 'User' )->getUserInfo ( $feedInfo['uid'] );
