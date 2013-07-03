@@ -43,8 +43,12 @@ class ProfileAction extends Action {
 		$user_info = model ( 'User' )->getUserInfo ( $this->uid );
 		// 用户为空，则跳转用户不存在
 		if (empty ( $user_info )) {
-			$this->assign("error","用户不存在！");//**********************
+			$this->error ( L ( 'PUBLIC_USER_NOEXIST' ) );
 		}
+		// 个人空间头部
+		$this->_top ();
+		$this->_tab_menu();
+		
 		// 判断隐私设置
 		$userPrivacy = $this->privacy ( $this->uid );
 		if ($userPrivacy ['space'] !== 1) {
@@ -79,9 +83,6 @@ class ProfileAction extends Action {
 		! empty ( $seo ['des'] ) && $this->setDescription ( $seo ['des'] );
 		$this->display ();
 	}
-	
-	
-	
 	function appList() {
 		// 获取用户信息
 		$user_info = model ( 'User' )->getUserInfo ( $this->uid );
@@ -225,7 +226,22 @@ class ProfileAction extends Action {
 		}
 	
 		//获取微博信息
-		
+		$feedInfo = model ( 'Feed' )->get ( $feed_id );
+
+		if (!$feedInfo){
+			$this->error ( '该微博不存在或已被删除' );
+			exit();
+		}
+			
+		if ($feedInfo ['is_audit'] == '0' && $feedInfo ['uid'] != $this->mid) {
+			$this->error ( '此微博正在审核' );
+			exit();
+		}
+
+		if ($feedInfo ['is_del'] == '1') {
+			$this->error ( L ( 'PUBLIC_NO_RELATE_WEIBO' ) );
+			exit();
+		}
 
 		// 获取用户信息
 		$user_info = model ( 'User' )->getUserInfo ( $feedInfo['uid'] );
@@ -525,10 +541,29 @@ class ProfileAction extends Action {
 		$this->assign ( $data );
 	}
 	
+	public function userinfo() {
+		
+		$user_info = model ( 'User' )->getUserInfo ( $this->uid );
+		if (empty ( $user_info )) {
+			$this->error ( L ( 'PUBLIC_USER_NOEXIST' ) );
+		}
+		// 获取用户组信息
+		$userGroupData = model ( 'UserGroupLink' )->getUserGroupData ( $this->uid );
+		$this->assign ( 'userGroupData', $userGroupData );
+		// 加载用户关注信息
+		($this->mid != $this->uid) && $this->_assignFollowState ( $this->uid );
+		// 获取用户统计信息
+		$userData = model ( 'UserData' )->getUserData ( $this->uid );
+		$this->assign ( 'userData', $userData );
+		$this->assign ( 'user_info', $user_info );
+		$this->display ();
+	}
+	
 	/**
 	 * 个人主页头部数据
 	 * 
 	 * @return void
+	 * 
 	 */
 	public function _top() {
 		// 获取用户组信息
