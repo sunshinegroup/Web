@@ -1,10 +1,11 @@
-
+﻿
 <php>if($userPrivacy['space'] != 1){</php>
                 <php>if($follower_list['data']){</php>
                     <!--搜索列表-->
                         <volist name="follower_list.data" id="_follower">
                             <php> $img = !empty($_GET['show']) ? $user_info[$_follower['fid']]['avatar_big']:$user_info[$_follower['fid']]['avatar_middle']; </php>
                       		uid: {$_follower['fid']} <br/>
+                      	
                       		user_name: {$user_info[$_follower['fid']]['uname']} <br/>
                       		sex: {$user_info[$_follower['fid']]['sex']}     //1:男 2:女<br/>
                       		face: {$img} <br/>
